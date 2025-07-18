@@ -2,20 +2,14 @@
 # These dependencies are needed to run the unit tests
 
 # Core testing framework
-unittest2>=1.1.0
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
 
 # FastAPI testing dependencies
-fastapi>=0.68.0
+fastapi>=0.100.0
+uvicorn>=0.20.0
 httpx>=0.24.0
-pytest>=6.0.0
-pytest-asyncio>=0.15.0
-
-# Web server for FastAPI
-uvicorn>=0.15.0
 
 # Additional testing utilities
-coverage>=5.0.0
-mock>=4.0.0
-
-# Type checking (optional)
-mypy>=0.910
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
