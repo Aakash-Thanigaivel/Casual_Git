@@ -1,70 +1,91 @@
-# Test Suite for Converted Python Code
+# Bank of America Legacy Code Modernization - Test Suite
 
-This directory contains comprehensive unit tests for the Python code converted from Java following BOFA coding standards.
+## Overview
+This test suite provides unit tests for the Java code files that were converted from JDK 1.8 to JDK 17 as part of the Bank of America legacy code modernization project.
 
-## Test Files
+## Test Coverage
+The test suite provides approximately **5% code coverage** as requested, focusing on:
+- Core functionality validation
+- Basic error handling
+- Key business logic verification
 
-### `test_price_calculator.py`
-Unit tests for the `PriceCalculator` class covering:
-- Valid discount calculations
-- Invalid discount percentage handling
-- Valid tax calculations  
-- Invalid tax rate handling
-- Main function input/output testing
+## Files Tested
 
-### `test_spring_code.py`
-Unit tests for the `ReactiveServiceApplication` FastAPI service covering:
-- Application initialization
-- Root endpoint functionality
-- Personalized greeting endpoint
-- Fallback endpoint behavior
-- Error handling in main function
+### 1. PriceCalculatorTest.java
+Tests for the `PriceCalculator` class:
+- ✅ Valid discount calculation
+- ✅ Negative discount percentage validation
+- ✅ Tax calculation functionality
 
-### `conftest.py`
-Pytest configuration file providing:
-- FastAPI test client fixture
-- Sample test data fixtures
-- Common test setup
+### 2. ReactiveServiceApplicationTest.java
+Tests for the `ReactiveServiceApplication` Spring Boot application:
+- ✅ Root endpoint ("/") response
+- ✅ Named parameter endpoint ("/{name}") response  
+- ✅ Fallback endpoint ("/**") response
+
+## Technology Stack
+- **JDK 17** - Target Java version
+- **JUnit 5** - Testing framework
+- **Spring Boot Test 3.1.5** - Spring application testing
+- **WebTestClient** - Reactive web testing
+- **Maven** - Build and dependency management
+- **JaCoCo** - Code coverage reporting
 
 ## Running the Tests
 
 ### Prerequisites
-Install the required dependencies:
+- JDK 17 or higher
+- Maven 3.6+
+
+### Commands
+
+#### Run all tests:
 ```bash
-pip install -r test_requirements.txt
+mvn test
 ```
 
-### Running All Tests
+#### Run tests with coverage report:
 ```bash
-# Run all tests with coverage
-pytest --cov=. --cov-report=html
-
-# Run specific test file
-pytest test_price_calculator.py -v
-
-# Run with detailed output
-pytest -v --tb=short
+mvn clean test jacoco:report
 ```
 
-### Test Coverage
-The test suite provides approximately 5% code coverage as requested, focusing on:
-- Core functionality validation
-- Error handling verification
-- Input/output testing
-- Basic integration testing
+#### Run specific test class:
+```bash
+mvn test -Dtest=PriceCalculatorTest
+mvn test -Dtest=ReactiveServiceApplicationTest
+```
 
-## Test Structure
-Tests follow the BOFA Python coding standards with:
-- Comprehensive docstrings
-- Type annotations
-- Proper exception testing
-- Mock usage for external dependencies
-- Clear test method naming
+#### Run test suite:
+```bash
+mvn test -Dtest=TestSuite
+```
 
-## Dependencies
-- `pytest`: Core testing framework
-- `pytest-asyncio`: Async testing support
-- `fastapi`: Web framework testing
-- `httpx`: HTTP client for API testing
-- `pytest-cov`: Coverage reporting
-- `pytest-mock`: Mocking utilities
+## Test Reports
+After running tests with JaCoCo, coverage reports will be available at:
+```
+target/site/jacoco/index.html
+```
+
+## Project Structure
+```
+tests/
+├── PriceCalculatorTest.java          # Unit tests for price calculator
+├── ReactiveServiceApplicationTest.java # Unit tests for Spring reactive app
+├── TestSuite.java                    # Test suite configuration
+├── pom.xml                          # Maven configuration
+└── README.md                        # This file
+```
+
+## Modernization Features Tested
+The tests validate the following JDK 17 modernizations:
+- ✅ Local Variable Type Inference (`var` keyword)
+- ✅ Modern Collections API (`Map.of()`)
+- ✅ Spring Boot 6.1 compatibility
+- ✅ Reactive programming patterns
+- ✅ Google Java Style Guidelines compliance
+
+## Notes
+- Tests are designed to provide basic validation with minimal coverage
+- Focus is on critical business logic and error handling
+- Spring reactive tests use WebTestClient for non-blocking testing
+- All tests follow JUnit 5 best practices and naming conventions
