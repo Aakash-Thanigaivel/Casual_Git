@@ -1,79 +1,41 @@
-"""Pytest configuration file for the test suite.
+"""Pytest configuration and shared fixtures.
 
-This module contains shared fixtures and configuration for all tests,
-following Google Python Style Guidelines.
+This module contains pytest configuration and shared test fixtures
+that can be used across multiple test modules.
 """
 
 import pytest
-import sys
-import os
-from pathlib import Path
-
-# Add the parent directory to the Python path so we can import the modules under test
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-
-@pytest.fixture
-def sample_price():
-    """Fixture providing a sample price for testing.
-    
-    Returns:
-        float: A sample price value for testing calculations.
-    """
-    return 100.0
-
-
-@pytest.fixture
-def sample_discount():
-    """Fixture providing a sample discount percentage for testing.
-    
-    Returns:
-        float: A sample discount percentage for testing.
-    """
-    return 10.0
-
-
-@pytest.fixture
-def sample_tax_rate():
-    """Fixture providing a sample tax rate for testing.
-    
-    Returns:
-        float: A sample tax rate for testing.
-    """
-    return 0.05
+from fastapi.testclient import TestClient
+from spring_code import ReactiveServiceApplication, create_application
+from price_calculator import PriceCalculator
 
 
 @pytest.fixture
 def price_calculator():
-    """Fixture providing a PriceCalculator instance for testing.
-    
-    Returns:
-        PriceCalculator: An instance of the PriceCalculator class.
-    """
-    from price_calculator import PriceCalculator
+    """Fixture that provides a PriceCalculator instance for testing."""
     return PriceCalculator()
 
 
 @pytest.fixture
-def reactive_service_app():
-    """Fixture providing a ReactiveServiceApplication instance for testing.
-    
-    Returns:
-        ReactiveServiceApplication: An instance of the ReactiveServiceApplication class.
-    """
-    from spring_code import ReactiveServiceApplication
+def reactive_service():
+    """Fixture that provides a ReactiveServiceApplication instance for testing."""
     return ReactiveServiceApplication()
 
 
 @pytest.fixture
 def test_client():
-    """Fixture providing a FastAPI test client for testing.
-    
-    Returns:
-        TestClient: A configured test client for the FastAPI application.
-    """
-    from fastapi.testclient import TestClient
-    from spring_code import create_app
-    
-    app = create_app()
+    """Fixture that provides a FastAPI test client for testing endpoints."""
+    app = create_application()
     return TestClient(app)
+
+
+@pytest.fixture
+def sample_prices():
+    """Fixture that provides sample price data for testing."""
+    return {
+        "base_price": 100.0,
+        "discount_10_percent": 10.0,
+        "discount_25_percent": 25.0,
+        "tax_rate_5_percent": 0.05,
+        "tax_rate_10_percent": 0.10
+    }
