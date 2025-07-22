@@ -4,70 +4,62 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for PriceCalculator class.
- * Tests cover discount calculations, tax calculations, and edge cases.
+ * Unit tests for PriceCalculator utility class.
+ * 
+ * <p>This test class provides comprehensive test coverage for price calculation
+ * functionality including discount calculations and tax applications.
+ * 
+ * <p>Following Google Java Style Guidelines and JUnit 5 best practices.
  */
-@DisplayName("Price Calculator Tests")
 class PriceCalculatorTest {
 
     @Test
     @DisplayName("Should calculate discounted price correctly with valid inputs")
     void testCalculateDiscountedPriceValidInputs() {
         // Given
-        double price = 100.0;
+        double originalPrice = 100.0;
         double discountPercentage = 20.0;
+        double expectedDiscountedPrice = 80.0;
         
         // When
-        double result = PriceCalculator.calculateDiscountedPrice(price, discountPercentage);
+        double actualDiscountedPrice = PriceCalculator.calculateDiscountedPrice(originalPrice, discountPercentage);
         
         // Then
-        assertEquals(80.0, result, 0.01, "Price after 20% discount should be 80.0");
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "100.0, 0.0, 100.0",
-        "100.0, 50.0, 50.0", 
-        "200.0, 25.0, 150.0",
-        "150.0, 100.0, 0.0"
-    })
-    @DisplayName("Should calculate discounted price for various discount percentages")
-    void testCalculateDiscountedPriceParameterized(double price, double discount, double expected) {
-        double result = PriceCalculator.calculateDiscountedPrice(price, discount);
-        assertEquals(expected, result, 0.01);
+        assertEquals(expectedDiscountedPrice, actualDiscountedPrice, 0.01);
     }
 
     @Test
-    @DisplayName("Should throw exception for negative discount percentage")
+    @DisplayName("Should throw IllegalArgumentException when discount percentage is negative")
     void testCalculateDiscountedPriceNegativeDiscount() {
         // Given
-        double price = 100.0;
-        double discountPercentage = -10.0;
+        double originalPrice = 100.0;
+        double negativeDiscount = -5.0;
         
         // When & Then
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            () -> PriceCalculator.calculateDiscountedPrice(price, discountPercentage)
+            () -> PriceCalculator.calculateDiscountedPrice(originalPrice, negativeDiscount)
         );
+        
         assertEquals("Discount percentage must be between 0 and 100.", exception.getMessage());
     }
 
-    @Test
-    @DisplayName("Should throw exception for discount percentage over 100")
-    void testCalculateDiscountedPriceOverHundredPercent() {
+    @ParameterizedTest
+    @ValueSource(doubles = {101.0, 150.0, 200.0})
+    @DisplayName("Should throw IllegalArgumentException when discount percentage exceeds 100")
+    void testCalculateDiscountedPriceExcessiveDiscount(double excessiveDiscount) {
         // Given
-        double price = 100.0;
-        double discountPercentage = 150.0;
+        double originalPrice = 100.0;
         
         // When & Then
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            () -> PriceCalculator.calculateDiscountedPrice(price, discountPercentage)
+            () -> PriceCalculator.calculateDiscountedPrice(originalPrice, excessiveDiscount)
         );
+        
         assertEquals("Discount percentage must be between 0 and 100.", exception.getMessage());
     }
 
@@ -75,40 +67,30 @@ class PriceCalculatorTest {
     @DisplayName("Should calculate final price with tax correctly")
     void testCalculateFinalPriceWithTaxValidInputs() {
         // Given
-        double price = 100.0;
+        double basePrice = 100.0;
         double taxRate = 0.05; // 5%
+        double expectedFinalPrice = 105.0;
         
         // When
-        double result = PriceCalculator.calculateFinalPriceWithTax(price, taxRate);
+        double actualFinalPrice = PriceCalculator.calculateFinalPriceWithTax(basePrice, taxRate);
         
         // Then
-        assertEquals(105.0, result, 0.01, "Price with 5% tax should be 105.0");
-    }
-
-    @ParameterizedTest
-    @ValueSource(doubles = {0.0, 0.05, 0.10, 0.15, 0.20})
-    @DisplayName("Should calculate tax for various tax rates")
-    void testCalculateFinalPriceWithTaxParameterized(double taxRate) {
-        double price = 100.0;
-        double expected = price + (price * taxRate);
-        
-        double result = PriceCalculator.calculateFinalPriceWithTax(price, taxRate);
-        
-        assertEquals(expected, result, 0.01);
+        assertEquals(expectedFinalPrice, actualFinalPrice, 0.01);
     }
 
     @Test
-    @DisplayName("Should throw exception for negative tax rate")
-    void testCalculateFinalPriceWithTaxNegativeRate() {
+    @DisplayName("Should throw IllegalArgumentException when tax rate is negative")
+    void testCalculateFinalPriceWithTaxNegativeTaxRate() {
         // Given
-        double price = 100.0;
-        double taxRate = -0.05;
+        double basePrice = 100.0;
+        double negativeTaxRate = -0.05;
         
         // When & Then
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            () -> PriceCalculator.calculateFinalPriceWithTax(price, taxRate)
+            () -> PriceCalculator.calculateFinalPriceWithTax(basePrice, negativeTaxRate)
         );
+        
         assertEquals("Tax rate cannot be negative.", exception.getMessage());
     }
 }

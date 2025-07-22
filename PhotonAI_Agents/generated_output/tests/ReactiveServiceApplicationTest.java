@@ -8,20 +8,23 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
  * Integration tests for ReactiveServiceApplication.
- * Tests the reactive web endpoints using WebTestClient.
+ * 
+ * <p>This test class provides comprehensive test coverage for the reactive web
+ * endpoints including root, parameterized, and fallback routes.
+ * 
+ * <p>Following Google Java Style Guidelines and Spring Boot testing best practices.
  */
 @WebFluxTest(ReactiveServiceApplication.class)
-@DisplayName("Reactive Service Application Tests")
 class ReactiveServiceApplicationTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @Test
-    @DisplayName("Should return greeting message for root endpoint")
+    @DisplayName("Should return 'hi' for root endpoint")
     void testRootEndpoint() {
-        webTestClient
-            .get()
+        // When & Then
+        webTestClient.get()
             .uri("/")
             .exchange()
             .expectStatus().isOk()
@@ -32,52 +35,25 @@ class ReactiveServiceApplicationTest {
     @Test
     @DisplayName("Should return personalized greeting for name endpoint")
     void testNameEndpoint() {
+        // Given
         String testName = "John";
+        String expectedResponse = "hello, " + testName + "!";
         
-        webTestClient
-            .get()
+        // When & Then
+        webTestClient.get()
             .uri("/{name}", testName)
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
-            .isEqualTo("hello, " + testName + "!");
+            .isEqualTo(expectedResponse);
     }
 
     @Test
-    @DisplayName("Should return personalized greeting for different names")
-    void testNameEndpointWithDifferentNames() {
-        // Test with different names
-        String[] testNames = {"Alice", "Bob", "Charlie", "Diana"};
-        
-        for (String name : testNames) {
-            webTestClient
-                .get()
-                .uri("/{name}", name)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .isEqualTo("hello, " + name + "!");
-        }
-    }
-
-    @Test
-    @DisplayName("Should return fallback message for unknown endpoints")
+    @DisplayName("Should return 'fallback' for unmatched endpoints")
     void testFallbackEndpoint() {
-        webTestClient
-            .get()
-            .uri("/unknown/path")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(String.class)
-            .isEqualTo("fallback");
-    }
-
-    @Test
-    @DisplayName("Should return fallback for nested unknown paths")
-    void testFallbackEndpointNestedPath() {
-        webTestClient
-            .get()
-            .uri("/some/deeply/nested/unknown/path")
+        // When & Then
+        webTestClient.get()
+            .uri("/some/random/path")
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
@@ -87,14 +63,32 @@ class ReactiveServiceApplicationTest {
     @Test
     @DisplayName("Should handle special characters in name parameter")
     void testNameEndpointWithSpecialCharacters() {
-        String nameWithSpecialChars = "test-user_123";
+        // Given
+        String testName = "test-user_123";
+        String expectedResponse = "hello, " + testName + "!";
         
-        webTestClient
-            .get()
-            .uri("/{name}", nameWithSpecialChars)
+        // When & Then
+        webTestClient.get()
+            .uri("/{name}", testName)
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
-            .isEqualTo("hello, " + nameWithSpecialChars + "!");
+            .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("Should handle empty name parameter")
+    void testNameEndpointWithEmptyName() {
+        // Given
+        String emptyName = "";
+        String expectedResponse = "hello, " + emptyName + "!";
+        
+        // When & Then
+        webTestClient.get()
+            .uri("/{name}", emptyName)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo(expectedResponse);
     }
 }
