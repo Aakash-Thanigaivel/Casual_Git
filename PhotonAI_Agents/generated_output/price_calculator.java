@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class PriceCalculator {
+    
     public static double calculateDiscountedPrice(double price, double discountPercentage) {
         if (discountPercentage < 0 || discountPercentage > 100) {
             throw new IllegalArgumentException("Discount percentage must be between 0 and 100.");
@@ -16,28 +17,24 @@ public class PriceCalculator {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        try {
+        try (var scanner = new Scanner(System.in)) {
             System.out.print("Enter the original price: ");
-            double originalPrice = scanner.nextDouble();
+            var originalPrice = scanner.nextDouble();
 
             System.out.print("Enter the discount percentage: ");
-            double discount = scanner.nextDouble();
+            var discount = scanner.nextDouble();
 
-            double discountedPrice = calculateDiscountedPrice(originalPrice, discount);
+            var discountedPrice = calculateDiscountedPrice(originalPrice, discount);
             System.out.printf("Price after %.2f%% discount: ₹%.2f%n", discount, discountedPrice);
 
             System.out.print("Enter the tax rate (e.g., 0.05 for 5%): ");
-            double tax = scanner.nextDouble();
+            var tax = scanner.nextDouble();
 
-            double finalPrice = calculateFinalPriceWithTax(discountedPrice, tax);
+            var finalPrice = calculateFinalPriceWithTax(discountedPrice, tax);
             System.out.printf("Final price with tax: ₹%.2f%n", finalPrice);
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
-        } finally {
-            scanner.close();
         }
     }
 }
