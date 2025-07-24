@@ -1,59 +1,113 @@
-package daggerok;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test cases for PriceCalculator utility class
- * Provides 5% code coverage for basic functionality testing
+ * Test cases for PriceCalculator utility class.
+ * 
+ * <p>This test class provides comprehensive unit tests for the PriceCalculator
+ * class methods with 5% code coverage focusing on critical functionality.
  */
 class PriceCalculatorTest {
 
-    @Test
-    @DisplayName("Should calculate discounted price correctly")
-    void testCalculateDiscountedPrice() {
-        // Test basic discount calculation
-        double result = PriceCalculator.calculateDiscountedPrice(100.0, 10.0);
-        assertEquals(90.0, result, 0.01);
+    @BeforeEach
+    void setUp() {
+        // Setup method for test initialization if needed
     }
 
     @Test
-    @DisplayName("Should throw exception for invalid discount percentage")
-    void testCalculateDiscountedPriceInvalidDiscount() {
-        // Test negative discount
-        assertThrows(IllegalArgumentException.class, () -> 
-            PriceCalculator.calculateDiscountedPrice(100.0, -5.0));
+    @DisplayName("Test calculateDiscountedPrice with valid discount percentage")
+    void testCalculateDiscountedPriceValidDiscount() {
+        // Test with 10% discount on $100
+        double originalPrice = 100.0;
+        double discountPercentage = 10.0;
+        double expected = 90.0;
         
-        // Test discount over 100%
-        assertThrows(IllegalArgumentException.class, () -> 
-            PriceCalculator.calculateDiscountedPrice(100.0, 105.0));
-    }
-
-    @Test
-    @DisplayName("Should calculate final price with tax correctly")
-    void testCalculateFinalPriceWithTax() {
-        // Test basic tax calculation
-        double result = PriceCalculator.calculateFinalPriceWithTax(100.0, 0.05);
-        assertEquals(105.0, result, 0.01);
-    }
-
-    @Test
-    @DisplayName("Should throw exception for negative tax rate")
-    void testCalculateFinalPriceWithTaxNegativeRate() {
-        assertThrows(IllegalArgumentException.class, () -> 
-            PriceCalculator.calculateFinalPriceWithTax(100.0, -0.05));
-    }
-
-    @Test
-    @DisplayName("Should handle zero values correctly")
-    void testZeroValues() {
-        // Test zero discount
-        double result1 = PriceCalculator.calculateDiscountedPrice(100.0, 0.0);
-        assertEquals(100.0, result1, 0.01);
+        double actual = PriceCalculator.calculateDiscountedPrice(originalPrice, discountPercentage);
         
-        // Test zero tax
-        double result2 = PriceCalculator.calculateFinalPriceWithTax(100.0, 0.0);
-        assertEquals(100.0, result2, 0.01);
+        assertEquals(expected, actual, 0.01, "Discounted price should be calculated correctly");
+    }
+
+    @Test
+    @DisplayName("Test calculateDiscountedPrice with invalid discount percentage - negative")
+    void testCalculateDiscountedPriceInvalidNegativeDiscount() {
+        double originalPrice = 100.0;
+        double invalidDiscount = -5.0;
+        
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> PriceCalculator.calculateDiscountedPrice(originalPrice, invalidDiscount),
+            "Should throw IllegalArgumentException for negative discount"
+        );
+        
+        assertEquals("Discount percentage must be between 0 and 100.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test calculateDiscountedPrice with invalid discount percentage - over 100")
+    void testCalculateDiscountedPriceInvalidHighDiscount() {
+        double originalPrice = 100.0;
+        double invalidDiscount = 150.0;
+        
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> PriceCalculator.calculateDiscountedPrice(originalPrice, invalidDiscount),
+            "Should throw IllegalArgumentException for discount over 100%"
+        );
+        
+        assertEquals("Discount percentage must be between 0 and 100.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test calculateFinalPriceWithTax with valid tax rate")
+    void testCalculateFinalPriceWithTaxValidRate() {
+        // Test with 5% tax on $100
+        double basePrice = 100.0;
+        double taxRate = 0.05;
+        double expected = 105.0;
+        
+        double actual = PriceCalculator.calculateFinalPriceWithTax(basePrice, taxRate);
+        
+        assertEquals(expected, actual, 0.01, "Final price with tax should be calculated correctly");
+    }
+
+    @Test
+    @DisplayName("Test calculateFinalPriceWithTax with invalid negative tax rate")
+    void testCalculateFinalPriceWithTaxInvalidNegativeRate() {
+        double basePrice = 100.0;
+        double invalidTaxRate = -0.05;
+        
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> PriceCalculator.calculateFinalPriceWithTax(basePrice, invalidTaxRate),
+            "Should throw IllegalArgumentException for negative tax rate"
+        );
+        
+        assertEquals("Tax rate cannot be negative.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test calculateDiscountedPrice with zero discount")
+    void testCalculateDiscountedPriceZeroDiscount() {
+        double originalPrice = 100.0;
+        double zeroDiscount = 0.0;
+        double expected = 100.0;
+        
+        double actual = PriceCalculator.calculateDiscountedPrice(originalPrice, zeroDiscount);
+        
+        assertEquals(expected, actual, 0.01, "Price should remain same with zero discount");
+    }
+
+    @Test
+    @DisplayName("Test calculateFinalPriceWithTax with zero tax rate")
+    void testCalculateFinalPriceWithTaxZeroRate() {
+        double basePrice = 100.0;
+        double zeroTaxRate = 0.0;
+        double expected = 100.0;
+        
+        double actual = PriceCalculator.calculateFinalPriceWithTax(basePrice, zeroTaxRate);
+        
+        assertEquals(expected, actual, 0.01, "Price should remain same with zero tax rate");
     }
 }
