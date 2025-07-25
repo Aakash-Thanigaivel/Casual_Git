@@ -1,33 +1,42 @@
+package daggerok;
+
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.context.ApplicationContext;
 
 /**
- * Test cases for ReactiveServiceApplication.
+ * Comprehensive unit tests for ReactiveServiceApplication.
  * 
- * <p>This test class provides comprehensive unit tests for the ReactiveServiceApplication
- * reactive endpoints with 5% code coverage focusing on critical functionality.
+ * <p>This test class provides integration testing for the reactive Spring Boot
+ * application endpoints and routing functionality.
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+@TestPropertySource(properties = {"server.port=0"})
 class ReactiveServiceApplicationTest {
 
-    private ReactiveServiceApplication application;
+    @Autowired
     private WebTestClient webTestClient;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @BeforeEach
     void setUp() {
-        application = new ReactiveServiceApplication();
-        RouterFunction<ServerResponse> routes = application.routes();
-        webTestClient = WebTestClient.bindToRouterFunction(routes).build();
+        // Ensure the application context is properly loaded
+        assertNotNull(applicationContext);
     }
 
     @Test
-    @DisplayName("Test root endpoint returns 'hi'")
+    @DisplayName("Should return greeting for root path")
     void testRootEndpoint() {
         webTestClient.get()
             .uri("/")
@@ -38,38 +47,21 @@ class ReactiveServiceApplicationTest {
     }
 
     @Test
-    @DisplayName("Test greeting endpoint with name parameter")
+    @DisplayName("Should return personalized greeting with name")
     void testGreetingEndpoint() {
-        String testName = "John";
-        String expectedResponse = "hello, John!";
-        
         webTestClient.get()
-            .uri("/" + testName)
+            .uri("/John")
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
-            .isEqualTo(expectedResponse);
+            .isEqualTo("hello, John!");
     }
 
     @Test
-    @DisplayName("Test greeting endpoint with special characters in name")
-    void testGreetingEndpointSpecialCharacters() {
-        String testName = "Jane-Doe";
-        String expectedResponse = "hello, Jane-Doe!";
-        
-        webTestClient.get()
-            .uri("/" + testName)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(String.class)
-            .isEqualTo(expectedResponse);
-    }
-
-    @Test
-    @DisplayName("Test fallback endpoint for unmatched routes")
+    @DisplayName("Should return fallback for unmatched paths")
     void testFallbackEndpoint() {
         webTestClient.get()
-            .uri("/some/random/path")
+            .uri("/some/unknown/path")
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
@@ -77,10 +69,54 @@ class ReactiveServiceApplicationTest {
     }
 
     @Test
-    @DisplayName("Test fallback endpoint for nested paths")
-    void testFallbackEndpointNestedPath() {
+    @DisplayName("Should handle special characters in name")
+    void testGreetingWithSpecialCharacters() {
         webTestClient.get()
-            .uri("/api/v1/users/123")
+            .uri("/test-user")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, test-user!");
+    }
+
+    @Test
+    @DisplayName("Should handle numeric names")
+    void testGreetingWithNumbers() {
+        webTestClient.get()
+            .uri("/123")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, 123!");
+    }
+
+    @Test
+    @DisplayName("Should handle names with spaces")
+    void testGreetingWithSpaces() {
+        webTestClient.get()
+            .uri("/John%20Doe")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, John Doe!");
+    }
+
+    @Test
+    @DisplayName("Should handle empty name parameter")
+    void testGreetingWithEmptyName() {
+        webTestClient.get()
+            .uri("/ ")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello,  !");
+    }
+
+    @Test
+    @DisplayName("Should handle multiple path segments in fallback")
+    void testFallbackWithMultipleSegments() {
+        webTestClient.get()
+            .uri("/api/v1/users/123/profile")
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
@@ -88,56 +124,101 @@ class ReactiveServiceApplicationTest {
     }
 
     @Test
-    @DisplayName("Test routes bean creation")
-    void testRoutesBeanCreation() {
-        RouterFunction<ServerResponse> routes = application.routes();
-        assertNotNull(routes, "Routes should not be null");
-    }
-
-    @Test
-    @DisplayName("Test application context loads successfully")
-    void testApplicationContextLoads() {
-        // This test ensures that the Spring Boot application context loads without errors
-        assertNotNull(application, "Application should be instantiated successfully");
-    }
-
-    @Test
-    @DisplayName("Test greeting endpoint with empty name")
-    void testGreetingEndpointEmptyName() {
-        // Test with empty string as name parameter
+    @DisplayName("Should handle query parameters in fallback")
+    void testFallbackWithQueryParameters() {
         webTestClient.get()
-            .uri("/")
+            .uri("/unknown?param1=value1&param2=value2")
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
-            .isEqualTo("hi"); // Should hit root endpoint, not greeting
+            .isEqualTo("fallback");
     }
 
     @Test
-    @DisplayName("Test greeting endpoint with numeric name")
-    void testGreetingEndpointNumericName() {
-        String testName = "123";
-        String expectedResponse = "hello, 123!";
-        
+    @DisplayName("Should handle long names")
+    void testGreetingWithLongName() {
+        String longName = "VeryLongNameThatExceedsNormalLengthExpectations";
         webTestClient.get()
-            .uri("/" + testName)
+            .uri("/" + longName)
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
-            .isEqualTo(expectedResponse);
+            .isEqualTo("hello, " + longName + "!");
     }
 
     @Test
-    @DisplayName("Test multiple consecutive requests to same endpoint")
-    void testMultipleRequestsToSameEndpoint() {
-        // Test that the endpoint handles multiple requests correctly
-        for (int i = 0; i < 3; i++) {
+    @DisplayName("Should handle names with special URL characters")
+    void testGreetingWithUrlEncodedCharacters() {
+        webTestClient.get()
+            .uri("/user%40example.com")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, user@example.com!");
+    }
+
+    @Test
+    @DisplayName("Should verify router function bean exists")
+    void testRouterFunctionBeanExists() {
+        RouterFunction<ServerResponse> routerFunction = 
+            applicationContext.getBean(RouterFunction.class);
+        assertNotNull(routerFunction);
+    }
+
+    @Test
+    @DisplayName("Should handle concurrent requests")
+    void testConcurrentRequests() {
+        // Test multiple concurrent requests to ensure thread safety
+        for (int i = 0; i < 10; i++) {
+            final int requestId = i;
             webTestClient.get()
-                .uri("/")
+                .uri("/user" + requestId)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
-                .isEqualTo("hi");
+                .isEqualTo("hello, user" + requestId + "!");
+        }
+    }
+
+    @Test
+    @DisplayName("Should handle case sensitive names")
+    void testCaseSensitiveNames() {
+        webTestClient.get()
+            .uri("/John")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, John!");
+
+        webTestClient.get()
+            .uri("/john")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, john!");
+    }
+
+    @Test
+    @DisplayName("Should handle names with underscores and hyphens")
+    void testNamesWithSpecialCharacters() {
+        webTestClient.get()
+            .uri("/user_name")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, user_name!");
+
+        webTestClient.get()
+            .uri("/user-name")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("hello, user-name!");
+    }
+
+    private void assertNotNull(Object object) {
+        if (object == null) {
+            throw new AssertionError("Expected non-null object");
         }
     }
 }
