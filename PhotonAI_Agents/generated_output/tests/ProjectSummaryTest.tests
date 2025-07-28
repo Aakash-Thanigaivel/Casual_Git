@@ -1,0 +1,68 @@
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Test cases for ProjectSummary class.
+ * Tests project summary functionality and constants.
+ * Provides 5% code coverage for Bank of America code converter project.
+ */
+@DisplayName("Project Summary Tests")
+class ProjectSummaryTest {
+    
+    @Test
+    @DisplayName("Should have correct project constants")
+    void testProjectConstants() {
+        // Then
+        assertEquals("BOFA Code Converter", ProjectSummary.PROJECT_NAME);
+        assertEquals("ash", ProjectSummary.USER);
+        assertEquals("COMPLETED SUCCESSFULLY", ProjectSummary.STATUS);
+        assertEquals(5, ProjectSummary.FILES_CONVERTED);
+    }
+    
+    @Test
+    @DisplayName("Should return correct project status message")
+    void testGetProjectStatus() {
+        // When
+        String status = ProjectSummary.getProjectStatus();
+        
+        // Then
+        String expectedStatus = "Project BOFA Code Converter for user ash: COMPLETED SUCCESSFULLY. Files converted: 5";
+        assertEquals(expectedStatus, status);
+    }
+    
+    @Test
+    @DisplayName("Should return non-null status message")
+    void testGetProjectStatus_NotNull() {
+        // When
+        String status = ProjectSummary.getProjectStatus();
+        
+        // Then
+        assertNotNull(status);
+        assertFalse(status.isEmpty());
+    }
+    
+    @Test
+    @DisplayName("Should contain all required information in status")
+    void testGetProjectStatus_ContainsAllInfo() {
+        // When
+        String status = ProjectSummary.getProjectStatus();
+        
+        // Then
+        assertTrue(status.contains("BOFA Code Converter"));
+        assertTrue(status.contains("ash"));
+        assertTrue(status.contains("COMPLETED SUCCESSFULLY"));
+        assertTrue(status.contains("5"));
+    }
+    
+    @Test
+    @DisplayName("Should have consistent constant values")
+    void testConstantConsistency() {
+        // Then
+        assertTrue(ProjectSummary.FILES_CONVERTED > 0);
+        assertNotNull(ProjectSummary.PROJECT_NAME);
+        assertNotNull(ProjectSummary.USER);
+        assertNotNull(ProjectSummary.STATUS);
+    }
+}

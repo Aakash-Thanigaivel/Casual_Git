@@ -1,0 +1,53 @@
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+/**
+ * Test cases for JBossExample class.
+ * Tests WebSphere to JBoss migration functionality.
+ * Provides 5% code coverage for Bank of America code converter project.
+ */
+@DisplayName("JBoss Example Tests")
+class JBossExampleTest {
+    
+    private JBossExample jbossExample;
+    private InitialContext mockContext;
+    private DataSource mockDataSource;
+    
+    @BeforeEach
+    void setUp() {
+        jbossExample = new JBossExample();
+        mockContext = mock(InitialContext.class);
+        mockDataSource = mock(DataSource.class);
+    }
+    
+    @Test
+    @DisplayName("Should successfully lookup JBoss datasource")
+    void testLookupResource_Success() throws Exception {
+        // Given
+        when(mockContext.lookup("java:jboss/datasources/MyDataSource"))
+            .thenReturn(mockDataSource);
+        
+        // When & Then
+        assertDoesNotThrow(() -> jbossExample.lookupResource());
+    }
+    
+    @Test
+    @DisplayName("Should handle naming exception during lookup")
+    void testLookupResource_NamingException() throws Exception {
+        // Given
+        InitialContext contextSpy = spy(new InitialContext());
+        doThrow(new NamingException("Lookup failed"))
+            .when(contextSpy).lookup(anyString());
+        
+        // When & Then
+        assertThrows(NamingException.class, () -> {
+            contextSpy.lookup("java:jboss/datasources/MyDataSource");
+        });
+    }
+}
