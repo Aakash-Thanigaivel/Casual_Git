@@ -1,124 +1,141 @@
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.reactive.server.WebTestClient.*;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 
 /**
- * Test cases for ReactiveServiceApplication.
+ * Integration test cases for ReactiveServiceApplication.
  * 
- * <p>This test class provides comprehensive unit tests for the ReactiveServiceApplication
- * reactive endpoints with 5% code coverage focusing on critical functionality.
+ * <p>This test class provides integration tests for the reactive web endpoints
+ * including root, parameterized greeting, and fallback routes.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("ReactiveServiceApplication Tests")
+@SpringBootTest(classes = daggerok.ReactiveServiceApplication.class)
+@AutoConfigureWebTestClient
+@TestPropertySource(properties = {"server.port=0"})
 class ReactiveServiceApplicationTest {
 
-    private WebTestClient webTestClient;
+  @Autowired
+  private WebTestClient webTestClient;
 
-    @Nested
-    @DisplayName("Router Function Tests")
-    class RouterFunctionTests {
+  @Test
+  @DisplayName("Should return greeting message for root endpoint")
+  void testRootEndpoint() {
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/")
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hi");
+  }
 
-        @Test
-        @DisplayName("Should create router function bean successfully")
-        void shouldCreateRouterFunctionBean() {
-            // Given
-            ReactiveServiceApplication app = new ReactiveServiceApplication();
+  @Test
+  @DisplayName("Should return personalized greeting for name parameter")
+  void testGreetingEndpointWithName() {
+    // Given
+    String name = "John";
+    
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/{name}", name)
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hello, John!");
+  }
 
-            // When
-            var routerFunction = app.routes();
+  @Test
+  @DisplayName("Should return fallback message for unmatched paths")
+  void testFallbackEndpoint() {
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/unknown/path")
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("fallback");
+  }
 
-            // Then
-            assertNotNull(routerFunction);
-        }
-    }
+  @Test
+  @DisplayName("Should handle special characters in name parameter")
+  void testGreetingEndpointWithSpecialCharacters() {
+    // Given
+    String name = "test-user_123";
+    
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/{name}", name)
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hello, test-user_123!");
+  }
 
-    @Nested
-    @DisplayName("API Response Record Tests")
-    class ApiResponseRecordTests {
+  @Test
+  @DisplayName("Should handle empty name parameter")
+  void testGreetingEndpointWithEmptyName() {
+    // Given
+    String name = "";
+    
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/{name}", name)
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hello, !");
+  }
 
-        @Test
-        @DisplayName("Should create ApiResponse record with correct values")
-        void shouldCreateApiResponseRecord() {
-            // Given
-            String expectedMessage = "Test message";
-            long expectedTimestamp = System.currentTimeMillis();
-            String expectedPath = "/test";
+  @Test
+  @DisplayName("Should handle numeric name parameter")
+  void testGreetingEndpointWithNumericName() {
+    // Given
+    String name = "12345";
+    
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/{name}", name)
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hello, 12345!");
+  }
 
-            // When
-            ReactiveServiceApplication.ApiResponse response = 
-                new ReactiveServiceApplication.ApiResponse(expectedMessage, expectedTimestamp, expectedPath);
+  @Test
+  @DisplayName("Should handle deeply nested fallback paths")
+  void testDeeplyNestedFallbackPath() {
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/api/v1/users/profile/settings")
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("fallback");
+  }
 
-            // Then
-            assertNotNull(response);
-            assertEquals(expectedMessage, response.message());
-            assertEquals(expectedTimestamp, response.timestamp());
-            assertEquals(expectedPath, response.path());
-        }
-
-        @Test
-        @DisplayName("Should demonstrate record immutability")
-        void shouldDemonstrateRecordImmutability() {
-            // Given
-            ReactiveServiceApplication.ApiResponse response1 = 
-                new ReactiveServiceApplication.ApiResponse("message", 123L, "/path");
-            ReactiveServiceApplication.ApiResponse response2 = 
-                new ReactiveServiceApplication.ApiResponse("message", 123L, "/path");
-
-            // When & Then
-            assertEquals(response1, response2);
-            assertEquals(response1.hashCode(), response2.hashCode());
-            assertEquals(response1.toString(), response2.toString());
-        }
-    }
-
-    @Nested
-    @DisplayName("Application Startup Tests")
-    class ApplicationStartupTests {
-
-        @Test
-        @DisplayName("Should have main method for application startup")
-        void shouldHaveMainMethod() {
-            // Given & When & Then
-            assertDoesNotThrow(() -> {
-                // Verify main method exists and can be called
-                var mainMethod = ReactiveServiceApplication.class.getMethod("main", String[].class);
-                assertNotNull(mainMethod);
-                assertTrue(java.lang.reflect.Modifier.isStatic(mainMethod.getModifiers()));
-                assertTrue(java.lang.reflect.Modifier.isPublic(mainMethod.getModifiers()));
-            });
-        }
-
-        @Test
-        @DisplayName("Should be annotated with SpringBootApplication")
-        void shouldBeAnnotatedWithSpringBootApplication() {
-            // Given & When
-            boolean hasAnnotation = ReactiveServiceApplication.class
-                .isAnnotationPresent(org.springframework.boot.autoconfigure.SpringBootApplication.class);
-
-            // Then
-            assertTrue(hasAnnotation);
-        }
-    }
-
-    @Nested
-    @DisplayName("Configuration Tests")
-    class ConfigurationTests {
-
-        @Test
-        @DisplayName("Should have routes method annotated with Bean")
-        void shouldHaveRoutesMethodWithBeanAnnotation() throws NoSuchMethodException {
-            // Given & When
-            var routesMethod = ReactiveServiceApplication.class.getMethod("routes");
-            boolean hasBeanAnnotation = routesMethod
-                .isAnnotationPresent(org.springframework.context.annotation.Bean.class);
-
-            // Then
-            assertTrue(hasBeanAnnotation);
-        }
-    }
+  @Test
+  @DisplayName("Should handle path with query parameters")
+  void testFallbackEndpointWithQueryParams() {
+    // When & Then
+    webTestClient
+        .get()
+        .uri("/unknown?param1=value1&param2=value2")
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("fallback");
+  }
 }
