@@ -13,18 +13,18 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 /**
- * Reactive Spring Boot application providing simple HTTP endpoints.
- *
- * <p>This application demonstrates modern Spring Boot 6.1 practices with reactive programming
- * using WebFlux, following Google Java Style Guidelines and JDK 17 features.
+ * Spring Boot 6.1 reactive web application with functional routing.
+ * 
+ * <p>This application demonstrates modern Spring WebFlux patterns using functional
+ * endpoints and reactive programming with Project Reactor.
  */
 @SpringBootApplication
 public class ReactiveServiceApplication {
 
   /**
-   * Configures the reactive router function with HTTP endpoints.
+   * Configures the functional routes for the reactive web application.
    *
-   * @return RouterFunction defining the application routes
+   * @return RouterFunction containing all application routes
    */
   @Bean
   public RouterFunction<ServerResponse> routes() {
@@ -34,10 +34,10 @@ public class ReactiveServiceApplication {
   }
 
   /**
-   * Handles the root endpoint.
+   * Handles the root endpoint request.
    *
    * @param request the server request
-   * @return a Mono containing the server response
+   * @return ServerResponse with greeting message
    */
   private Mono<ServerResponse> handleRoot(
       org.springframework.web.reactive.function.server.ServerRequest request) {
@@ -45,10 +45,10 @@ public class ReactiveServiceApplication {
   }
 
   /**
-   * Handles the greeting endpoint with path variable.
+   * Handles personalized greeting requests.
    *
-   * @param request the server request containing the name path variable
-   * @return a Mono containing the personalized greeting response
+   * @param request the server request containing path variable
+   * @return ServerResponse with personalized greeting
    */
   private Mono<ServerResponse> handleGreeting(
       org.springframework.web.reactive.function.server.ServerRequest request) {
@@ -58,10 +58,10 @@ public class ReactiveServiceApplication {
   }
 
   /**
-   * Handles all other endpoints as fallback.
+   * Handles fallback requests for unmatched routes.
    *
    * @param request the server request
-   * @return a Mono containing the fallback response
+   * @return ServerResponse with fallback message
    */
   private Mono<ServerResponse> handleFallback(
       org.springframework.web.reactive.function.server.ServerRequest request) {

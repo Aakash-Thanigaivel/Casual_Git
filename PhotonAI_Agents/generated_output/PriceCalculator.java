@@ -3,20 +3,20 @@ import java.util.Scanner;
 /**
  * A utility class for calculating discounted prices and final prices with tax.
  * 
- * <p>This class provides static methods to calculate discounts and apply tax rates
- * to prices, following Google Java Style Guidelines and using JDK 17 features.
+ * <p>This class provides static methods to calculate discounted prices and apply tax rates
+ * to prices. All calculations are performed using double precision arithmetic.
  */
 public final class PriceCalculator {
   
   private PriceCalculator() {
-    // Utility class should not be instantiated
+    // Utility class - prevent instantiation
   }
 
   /**
    * Calculates the discounted price based on the original price and discount percentage.
    *
    * @param price the original price, must be non-negative
-   * @param discountPercentage the discount percentage, must be between 0 and 100
+   * @param discountPercentage the discount percentage, must be between 0 and 100 inclusive
    * @return the price after applying the discount
    * @throws IllegalArgumentException if discount percentage is not between 0 and 100
    */
@@ -43,7 +43,7 @@ public final class PriceCalculator {
   }
 
   /**
-   * Main method to demonstrate price calculation functionality.
+   * Main method to run the price calculator application.
    *
    * @param args command line arguments (not used)
    */
@@ -52,18 +52,18 @@ public final class PriceCalculator {
 
     try {
       System.out.print("Enter the original price: ");
-      var originalPrice = scanner.nextDouble();
+      double originalPrice = scanner.nextDouble();
 
       System.out.print("Enter the discount percentage: ");
-      var discount = scanner.nextDouble();
+      double discount = scanner.nextDouble();
 
-      var discountedPrice = calculateDiscountedPrice(originalPrice, discount);
+      double discountedPrice = calculateDiscountedPrice(originalPrice, discount);
       System.out.printf("Price after %.2f%% discount: ₹%.2f%n", discount, discountedPrice);
 
-      System.out.print("Enter the tax rate (e.g., 0.05 for 5%): ");
-      var tax = scanner.nextDouble();
+      System.out.print("Enter the tax rate (e.g., 0.05 for 5%%): ");
+      double tax = scanner.nextDouble();
 
-      var finalPrice = calculateFinalPriceWithTax(discountedPrice, tax);
+      double finalPrice = calculateFinalPriceWithTax(discountedPrice, tax);
       System.out.printf("Final price with tax: ₹%.2f%n", finalPrice);
 
     } catch (Exception e) {
