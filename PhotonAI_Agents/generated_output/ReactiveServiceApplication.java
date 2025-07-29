@@ -1,6 +1,5 @@
 package daggerok;
 
-import java.util.Map;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,44 +12,45 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 /**
- * Spring Boot 6.1 reactive web application with functional routing.
+ * Spring Boot 6.1 reactive web application.
  * 
- * <p>This application demonstrates modern Spring WebFlux patterns using functional
- * endpoints and reactive programming with Project Reactor.
+ * <p>This application demonstrates modern Spring Boot reactive programming
+ * using WebFlux with functional routing. It provides three endpoints:
+ * a greeting endpoint, a personalized greeting, and a fallback route.
  */
 @SpringBootApplication
 public class ReactiveServiceApplication {
 
   /**
-   * Configures the functional routes for the reactive web application.
+   * Configures the reactive routes for the application.
    *
    * @return RouterFunction containing all application routes
    */
   @Bean
   public RouterFunction<ServerResponse> routes() {
-    return route(GET("/"), this::handleRoot)
-        .andRoute(GET("/{name}"), this::handleGreeting)
+    return route(GET("/"), this::handleGreeting)
+        .andRoute(GET("/{name}"), this::handlePersonalizedGreeting)
         .andRoute(GET("/**"), this::handleFallback);
   }
 
   /**
-   * Handles the root endpoint request.
+   * Handles the root greeting endpoint.
    *
    * @param request the server request
-   * @return ServerResponse with greeting message
+   * @return a ServerResponse with greeting message
    */
-  private Mono<ServerResponse> handleRoot(
+  private Mono<ServerResponse> handleGreeting(
       org.springframework.web.reactive.function.server.ServerRequest request) {
     return ok().body(Mono.just("hi"), String.class);
   }
 
   /**
-   * Handles personalized greeting requests.
+   * Handles personalized greeting with path variable.
    *
-   * @param request the server request containing path variable
-   * @return ServerResponse with personalized greeting
+   * @param request the server request containing the name path variable
+   * @return a ServerResponse with personalized greeting
    */
-  private Mono<ServerResponse> handleGreeting(
+  private Mono<ServerResponse> handlePersonalizedGreeting(
       org.springframework.web.reactive.function.server.ServerRequest request) {
     var name = request.pathVariable("name");
     var greeting = "hello, " + name + "!";
@@ -58,10 +58,10 @@ public class ReactiveServiceApplication {
   }
 
   /**
-   * Handles fallback requests for unmatched routes.
+   * Handles fallback route for unmatched requests.
    *
    * @param request the server request
-   * @return ServerResponse with fallback message
+   * @return a ServerResponse with fallback message
    */
   private Mono<ServerResponse> handleFallback(
       org.springframework.web.reactive.function.server.ServerRequest request) {
@@ -75,7 +75,7 @@ public class ReactiveServiceApplication {
    */
   public static void main(String[] args) {
     var app = new SpringApplication(ReactiveServiceApplication.class);
-    app.setDefaultProperties(Map.of("server.port", "3000"));
+    app.setDefaultProperties(java.util.Map.of("server.port", "3000"));
     app.run(args);
   }
 }
