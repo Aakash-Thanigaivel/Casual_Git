@@ -4,31 +4,19 @@ import jakarta.validation.constraints.NotNull;
 
 public class RequestDto {
 
-    @NotNull
-    private String inputField;
+    // Define fields with validation annotations
+    // Example:
+    // @NotNull
+    // private String fieldName;
 
     // Getters and setters
-
-    public String getInputField() {
-        return inputField;
-    }
-
-    public void setInputField(String inputField) {
-        this.inputField = inputField;
-    }
 }
 
 public class ResponseDto {
 
-    private String outputField;
+    // Define response fields
+    // Example:
+    // private String responseField;
 
     // Getters and setters
-
-    public String getOutputField() {
-        return outputField;
-    }
-
-    public void setOutputField(String outputField) {
-        this.outputField = outputField;
-    }
 }

@@ -15,25 +15,10 @@ public class SqlStateCheckEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Map COBOL data items to fields
-    @Column(name = "FIELD_NAME")
-    private String fieldName;
+    // Map COBOL data items to entity fields
+    // Example:
+    // @Column(name = "FIELD_NAME")
+    // private String fieldName;
 
     // Getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
 }

@@ -1,24 +1,25 @@
-package com.example.sampledatarow.controller;
+package com.example.sampledata.controller;
 
-import com.example.sampledatarow.dto.SampleDataRowRequest;
-import com.example.sampledatarow.dto.SampleDataRowResponse;
-import com.example.sampledatarow.service.SampleDataRowService;
+import com.example.sampledata.dto.SampleDataRequest;
+import com.example.sampledata.dto.SampleDataResponse;
+import com.example.sampledata.service.SampleDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 
 @RestController
-public class SampleDataRowController {
+public class SampleDataController {
 
     @Autowired
-    private SampleDataRowService sampleDataRowService;
+    private SampleDataService sampleDataService;
 
-    @PostMapping("/sampledatarow")
-    public ResponseEntity<SampleDataRowResponse> processSampleDataRow(@Valid @RequestBody SampleDataRowRequest request) {
-        SampleDataRowResponse response = sampleDataRowService.processRequest(request);
+    @PostMapping("/sampledata")
+    public ResponseEntity<SampleDataResponse> processSampleData(@Valid @RequestBody SampleDataRequest request) {
+        SampleDataResponse response = sampleDataService.processData(request);
         return ResponseEntity.ok(response);
     }
 }

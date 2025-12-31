@@ -1,23 +1,22 @@
-package com.example.sampledatarow.service;
+package com.example.sampledata.service;
 
-import com.example.sampledatarow.dto.SampleDataRowRequest;
-import com.example.sampledatarow.dto.SampleDataRowResponse;
-import com.example.sampledatarow.repository.SampleDataRowRepository;
+import com.example.sampledata.dto.SampleDataRequest;
+import com.example.sampledata.dto.SampleDataResponse;
+import com.example.sampledata.repository.SampleDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SampleDataRowService {
+public class SampleDataService {
 
     @Autowired
-    private SampleDataRowRepository sampleDataRowRepository;
+    private SampleDataRepository sampleDataRepository;
 
     @Transactional
-    public SampleDataRowResponse processRequest(SampleDataRowRequest request) {
+    public SampleDataResponse processData(SampleDataRequest request) {
         // Implement business logic here
-        // Map EXEC SQL to JPA operations
-        // Handle validation and processing
-        return new SampleDataRowResponse();
+        // Example: Validate request, perform DB operations, build response
+        return new SampleDataResponse();
     }
 }

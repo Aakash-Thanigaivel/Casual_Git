@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 public class SqlStateCheckController {
@@ -19,7 +19,7 @@ public class SqlStateCheckController {
 
     @PostMapping("/sqlstate-check")
     public ResponseEntity<ResponseDto> checkSqlState(@Valid @RequestBody RequestDto requestDto) {
-        ResponseDto response = sqlStateCheckService.processRequest(requestDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        ResponseDto responseDto = sqlStateCheckService.processRequest(requestDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }

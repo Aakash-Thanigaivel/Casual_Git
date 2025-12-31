@@ -1,8 +1,8 @@
-package com.example.sampledatarow.dto;
+package com.example.sampledata.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public class SampleDataRowRequest {
+public class SampleDataRequest {
 
     @NotNull
     private String filler1;
@@ -16,7 +16,7 @@ public class SampleDataRowRequest {
     // Getters and setters
 }
 
-public class SampleDataRowResponse {
+public class SampleDataResponse {
 
     private String responseMessage;
 

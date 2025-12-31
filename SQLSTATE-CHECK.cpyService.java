@@ -16,8 +16,8 @@ public class SqlStateCheckService {
     @Transactional
     public ResponseDto processRequest(RequestDto requestDto) {
         // Implement business logic equivalent to PROCEDURE DIVISION
-        // Perform validation and database operations
-        // Build and return response
+        // Perform validation, business processing, and database interactions
+        // Return response DTO
         return new ResponseDto();
     }
 }
