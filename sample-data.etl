@@ -1,0 +1,34 @@
+CUSTOMER.DAT - Sample ETL Data File for Testing
+=================================================
+
+This is a sample data file that would be read by the COBOL ETL program.
+Each line represents a customer record in the format expected by the COBOL program.
+
+Data Format (Fixed Length):
+- Customer ID: 8 digits
+- Customer Name: 30 characters
+- Account Type: 1 character (C=Checking, S=Savings, B=Business)
+- Balance: 7 digits + 2 decimal places (9999999.99)
+- Credit Limit: 7 digits + 2 decimal places (9999999.99)
+- Status: 1 character (A=Active, I=Inactive, S=Suspended)
+
+Sample Records:
+12345678JOHN DOE                    C05000000010000000A
+87654321JANE SMITH                  S02500000005000000A
+11223344ACME CORPORATION           B10000000020000000A
+44332211BOB JOHNSON                 C00100000001000000I
+55667788ALICE WONG                  S07500000015000000A
+99887766XYZ INDUSTRIES              B20000000030000000S
+22334455MIKE DAVIS                  C01000000002000000A
+33445566SARA WILSON                 S00500000001500000A
+
+Expected Processing Results:
+- Valid records should be processed and written to PROCESSED.DAT
+- Invalid records should be written to ERRORS.DAT with error descriptions
+- Processing statistics should be calculated and displayed
+
+This ETL data file contains various scenarios for testing:
+- Valid customer records
+- Records with different account types
+- Records with different balance ranges
+- Records that may fail validation (like low balance inactive accounts)
